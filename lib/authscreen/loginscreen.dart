@@ -1,5 +1,3 @@
-
-
 import 'dart:convert';
 import 'package:ai/services/nijatech_ai.dart';
 import 'package:flutter/material.dart';
@@ -26,92 +24,58 @@ class _LoginscreenState extends State<Loginscreen> {
   bool _obscureText = true;
   bool loading = false;
 
- 
-
   // ---------------- LOGIN FUNCTION ----------------
- 
 
+  void login() async {
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
 
-// void login() async {
-//   final email = emailController.text.trim();
-//   final password = passwordController.text.trim();
+    if (email.isEmpty || password.isEmpty) {
+      AppUtils.showSingleDialogPopup(
+        context,
+        "Error",
+        "OK",
+        () => Navigator.pop(context),
+        null,
+      );
+      return;
+    }
 
-//   if (email.isEmpty || password.isEmpty) {
-//     Get.snackbar("Error", "Please enter email & password");
-//     return;
-//   }
+    setState(() => loading = true);
 
-//   setState(() => loading = true);
+    try {
+      final response = await apiService.login(email, password);
+      setState(() => loading = false);
 
-//   try {
-//     final response = await apiService.login(email, password);
-//     setState(() => loading = false);
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(response.body);
 
-//     if (response.statusCode == 200) {
-//       final jsonResponse = jsonDecode(response.body);
+        if (jsonResponse.containsKey("access_token")) {
+          // ✅ Success
+          final loginModel = LoginModel.fromJson(jsonResponse);
 
-//       if (jsonResponse.containsKey("access_token")) {
-//         // ✅ Success case
-//         final loginModel = LoginModel.fromJson(jsonResponse);
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString("name", email);
+          await prefs.setString("accessToken", loginModel.accessToken);
+          await prefs.setString("tokenType", loginModel.tokenType);
 
-//         final prefs = await SharedPreferences.getInstance();
-//         await prefs.setString("accessToken", loginModel.accessToken);
-//         await prefs.setString("tokenType", loginModel.tokenType);
-
-//         Get.offAllNamed('/admin'); 
-//       } else {
-//         // ❌ Wrong username or password
-//         final errorMsg = jsonResponse["detail"] ?? "Invalid credentials";
-//         Get.snackbar("Error", errorMsg.toString());
-//       }
-//     } else {
-//       // ❌ Server side error (like 401, 500)
-//       final jsonResponse = jsonDecode(response.body);
-//       final errorMsg = jsonResponse["detail"] ?? "Server error: ${response.statusCode}";
-//       Get.snackbar("Error", errorMsg.toString());
-//     }
-//   } catch (e) {
-//     setState(() => loading = false);
-//     Get.snackbar("Error", e.toString());
-//   }
-// }
-
-void login() async {
-  final email = emailController.text.trim();
-  final password = passwordController.text.trim();
-
-  if (email.isEmpty || password.isEmpty) {
-    AppUtils.showSingleDialogPopup(
-      context,
-      "Error",
-      "OK",
-      () => Navigator.pop(context),
-      null,
-    );
-    return;
-  }
-
-  setState(() => loading = true);
-
-  try {
-    final response = await apiService.login(email, password);
-    setState(() => loading = false);
-
-    if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(response.body);
-
-      if (jsonResponse.containsKey("access_token")) {
-        // ✅ Success
-        final loginModel = LoginModel.fromJson(jsonResponse);
-
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString("accessToken", loginModel.accessToken);
-        await prefs.setString("tokenType", loginModel.tokenType);
-
-        Get.offAllNamed('/admin');
+          Get.offAllNamed('/admin');
+        } else {
+          // ❌ Wrong username/password
+          final errorMsg = jsonResponse["detail"] ?? "Invalid credentials";
+          AppUtils.showSingleDialogPopup(
+            context,
+            errorMsg,
+            "OK",
+            () => Navigator.pop(context),
+            null,
+          );
+        }
       } else {
-        // ❌ Wrong username/password
-        final errorMsg = jsonResponse["detail"] ?? "Invalid credentials";
+        // ❌ Server error
+        final jsonResponse = jsonDecode(response.body);
+        final errorMsg =
+            jsonResponse["detail"] ?? "Server error: ${response.statusCode}";
         AppUtils.showSingleDialogPopup(
           context,
           errorMsg,
@@ -120,45 +84,26 @@ void login() async {
           null,
         );
       }
-    } else {
-      // ❌ Server error
-      final jsonResponse = jsonDecode(response.body);
-      final errorMsg =
-          jsonResponse["detail"] ?? "Server error: ${response.statusCode}";
+    } catch (e) {
+      setState(() => loading = false);
       AppUtils.showSingleDialogPopup(
         context,
-        errorMsg,
+        e.toString(),
         "OK",
         () => Navigator.pop(context),
         null,
       );
     }
-  } catch (e) {
-    setState(() => loading = false);
-    AppUtils.showSingleDialogPopup(
-      context,
-      e.toString(),
-      "OK",
-      () => Navigator.pop(context),
-      null,
-    );
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
-    return 
-    
-    Scaffold(
+    return Scaffold(
       body: Stack(
         children: [
           // Background image
           SizedBox.expand(
-            child: Image.asset(
-              AppAssets.gradient_bg,
-              fit: BoxFit.cover,
-            ),
+            child: Image.asset(AppAssets.gradient_bg, fit: BoxFit.cover),
           ),
 
           // Semi-transparent overlay
@@ -207,7 +152,10 @@ void login() async {
                     decoration: InputDecoration(
                       hintText: "hi@gmail.com",
                       hintStyle: TextStyle(color: AppColor.litgrey),
-                      suffixIcon: const Icon(Icons.person, color: AppColor.grey),
+                      suffixIcon: const Icon(
+                        Icons.person,
+                        color: AppColor.grey,
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -230,7 +178,9 @@ void login() async {
                       prefixIcon: Icon(Icons.lock, color: AppColor.litgrey),
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _obscureText ? Icons.visibility_off : Icons.visibility,
+                          _obscureText
+                              ? Icons.visibility_off
+                              : Icons.visibility,
                           color: AppColor.grey,
                         ),
                         onPressed: () {
@@ -254,7 +204,10 @@ void login() async {
                     children: [
                       TextButton(
                         onPressed: () {},
-                        child: Text("Forgot Password", style: TextStyle(color: AppColor.grey)),
+                        child: Text(
+                          "Forgot Password",
+                          style: TextStyle(color: AppColor.grey),
+                        ),
                       ),
                     ],
                   ),

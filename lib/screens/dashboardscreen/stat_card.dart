@@ -13,7 +13,7 @@ class StatCard extends StatelessWidget {
     required this.title,
     required this.imagePath,
     required this.backgroundColor,
-     required this.imageColor,
+    required this.imageColor,
   });
 
   @override
@@ -36,7 +36,7 @@ class StatCard extends StatelessWidget {
               Text(
                 amount,
                 style: const TextStyle(
-                  fontSize: 22,
+                  fontSize: 30,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                 ),
@@ -44,10 +44,7 @@ class StatCard extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 title,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
-                ),
+                style: const TextStyle(fontSize: 14, color: Colors.black),
               ),
             ],
           ),
@@ -62,7 +59,7 @@ class StatCard extends StatelessWidget {
               imagePath,
               width: 30,
               height: 30,
-             color: imageColor,       
+              color: imageColor,
             ),
           ),
         ],
