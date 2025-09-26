@@ -16,22 +16,26 @@ class AdminController extends GetxController {
   // Main menus
   final List<String> menuItems = ["Dashboard", "Settings", "Reports"];
   final List<IconData> menuIcons = [
-    Icons.dashboard,
+    Icons.home,
     Icons.settings,
-    Icons.bar_chart
+    Icons.bar_chart,
   ];
 
   // Settings submenu
-  final List<String> settingsSubmenu = ["Netsuite Credential", "Google Credential","Upload Open API"];
+  final List<String> settingsSubmenu = [
+    "Netsuite Credential",
+    "Google Credential",
+    "Upload Open API",
+  ];
   final Map<String, IconData> submenuIcons = {
     "Netsuite Credential": Icons.person,
     "Google Credential": Icons.lock,
-    "Upload Open API" : Icons.key
+    "Upload Open API": Icons.key,
   };
   final Map<String, Widget> settingsSubmenuPages = {
     "Netsuite Credential": Netsuitecredential(),
     "Google Credential": Googlecredentialscreen(),
-    "Upload Open API" : Uploadopenapikeyscreen()
+    "Upload Open API": Uploadopenapikeyscreen(),
   };
 
   // Reports submenu
@@ -41,8 +45,12 @@ class AdminController extends GetxController {
     "Analytics": Icons.analytics,
   };
   final Map<String, Widget> reportsSubmenuPages = {
-    "Sales": Center(child: Text("Sales Report Page", style: TextStyle(fontSize: 22))),
-    "Analytics": Center(child: Text("Analytics Report Page", style: TextStyle(fontSize: 22))),
+    "Sales": Center(
+      child: Text("Sales Report Page", style: TextStyle(fontSize: 22)),
+    ),
+    "Analytics": Center(
+      child: Text("Analytics Report Page", style: TextStyle(fontSize: 22)),
+    ),
   };
 
   Rx<Widget> currentSubmenuPage = Rx<Widget>(Container());
@@ -87,8 +95,7 @@ class AdminController extends GetxController {
 
   bool isExpanded(String menu) => expandedMenu.contains(menu);
 
-
-    /// Logout function
+  /// Logout function
   Future<void> logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.clear(); // clear all saved data
@@ -97,4 +104,3 @@ class AdminController extends GetxController {
     Get.offAll(() => Loginscreen());
   }
 }
-

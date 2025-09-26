@@ -1,9 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import '../../services/nijatech_ai.dart';
-import '../widgets/app_utils.dart';
 
 class GoogleCredsController extends GetxController {
   var creds = <dynamic>[].obs; // store API data
@@ -98,42 +96,40 @@ class GoogleCredsController extends GetxController {
   //delete
 
   Future<bool> deleteCred(int index) async {
-  try {
-    final cred = creds[index];
-    final id = cred['_id']; // backend ID
-    final response = await apiService.deletegooglecreds(id);
+    try {
+      final cred = creds[index];
+      final id = cred['_id']; // backend ID
+      final response = await apiService.deletegooglecreds(id);
 
-    if (response.statusCode == 200 || response.statusCode == 204) {
-      // Re-fetch the updated list from backend
-       getallgooglecred();
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        // Re-fetch the updated list from backend
+        getallgooglecred();
 
-      Get.snackbar(
-        'Deleted',
-        'Credential deleted successfully',
-        snackPosition: SnackPosition.BOTTOM,
-      );
-      return true;
-    } else {
+        Get.snackbar(
+          'Deleted',
+          'Credential deleted successfully',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        return true;
+      } else {
+        Get.snackbar(
+          'Error',
+          'Failed to delete credential',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        return false;
+      }
+    } catch (e) {
       Get.snackbar(
         'Error',
-        'Failed to delete credential',
+        'Something went wrong',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
       return false;
     }
-  } catch (e) {
-    Get.snackbar(
-      'Error',
-      'Something went wrong',
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.red,
-      colorText: Colors.white,
-    );
-    return false;
   }
-}
-
-
 }

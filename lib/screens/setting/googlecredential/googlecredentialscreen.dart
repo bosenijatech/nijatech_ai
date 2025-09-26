@@ -1,10 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../constant/app_color.dart';
 import '../../../controller/googlecredentialcontroller.dart';
-import '../../../services/nijatech_ai.dart';
 
 class Googlecredentialscreen extends StatefulWidget {
   const Googlecredentialscreen({super.key});
@@ -218,7 +215,9 @@ class _GooglecredentialscreenState extends State<Googlecredentialscreen> {
                             ),
                           ),
                           child: Text(
-                           editIndex != null ? 'Save' : 'Add', // dynamically show text
+                            editIndex != null
+                                ? 'Save'
+                                : 'Add', // dynamically show text
                             style: const TextStyle(color: Colors.white),
                           ),
                         ),
@@ -277,7 +276,7 @@ class _GooglecredentialscreenState extends State<Googlecredentialscreen> {
                               ),
                               const SizedBox(height: 10),
                               Text(
-                                cred['emailHost'] ?? 'No Date',
+                                cred['emailHost'] ?? 'No Host',
                                 style: const TextStyle(color: Colors.grey),
                               ),
                             ],
